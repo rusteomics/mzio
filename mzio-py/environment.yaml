@@ -1,0 +1,9 @@
+name: rusteomics_proteomics_io
+dependencies:
+  - pip
+  - setuptools
+  - pip:
+    - -e ./
+    # Dev dependencies
+    - maturin
+    - pylint
