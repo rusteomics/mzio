@@ -13,6 +13,9 @@ mod test {
     use std::iter::zip;
     use std::path::Path;
 
+    use fallible_iterator::IntoFallibleIterator;
+    use fallible_iterator::FallibleIterator;
+
     const MGF_FILE_PATH_STR: &'static str = "../test_files/mgf/Velos005137.mgf";
     const EXPECTED_NUM_SPECTRA: usize = 100;
     const TEMP_MGF_PATH_STR: &'static str = "../test_files/mgf/Velos005137.mgf.tmp";
@@ -29,7 +32,7 @@ mod test {
             1024
         ).unwrap();
 
-        let entries: Vec<spectrum::Spectrum> = reader.into_iter().filter_map(|s| s.ok()).collect();
+        let entries: Vec<spectrum::Spectrum> = reader.into_fallible_iter().collect().unwrap();
         assert_eq!(entries.len(), EXPECTED_NUM_SPECTRA);
 
         let mut writer = writer::Writer::new(
