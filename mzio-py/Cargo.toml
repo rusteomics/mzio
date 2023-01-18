@@ -10,5 +10,6 @@ name = "rusteomics_proteomics_io_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.17.3", features = ["extension-module"] }
+anyhow = "1.0.68"
+pyo3 = { version = "0.17.3", features = ["extension-module", "anyhow"] }
 rusteomics-proteomics-io = { path = "../mzio-rs" }

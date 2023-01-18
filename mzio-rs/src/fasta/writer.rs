@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use crate::fasta::entry::Entry;
-use crate::fasta::error::Error;
+use anyhow::Result;
 
 /// Max amino acids per sequence line.
 const MAX_AMINO_ACIDS_PER_LINE: usize = 60;
@@ -22,7 +22,7 @@ impl Writer {
     ///
     /// * `fasta_file_path` - Path to FASTA file
     /// 
-    pub fn new(fasta_file_path: &Path) -> Result<Self, Error> {
+    pub fn new(fasta_file_path: &Path) -> Result<Self> {
         let fasta_file: File = File::create(fasta_file_path)?;
         Ok(Self {
             internal_writer: BufWriter::new(fasta_file)
@@ -80,7 +80,7 @@ impl Writer {
     /// * `entry` - FASTA entry
     /// * `sort_keyword_attributes` - If true the keyword attributes will be sorted (for testing and readability reasons)
     /// 
-    pub fn write_entry(&mut self, entry: &Entry, sort_keyword_attributes: bool) -> Result<usize, Error> {
+    pub fn write_entry(&mut self, entry: &Entry, sort_keyword_attributes: bool) -> Result<usize> {
         let mut written_bytes: usize = 0;
         written_bytes += self.internal_writer.write(Self::create_header(entry, sort_keyword_attributes).as_bytes())?;
         written_bytes += self.internal_writer.write(b"\n")?;
@@ -96,7 +96,7 @@ impl Writer {
     /// * `entires` - Iterator of FASTA entries
     /// * `sort_keyword_attributes` - If true the keyword attributes will be sorted (for testing and readability reasons)
     /// 
-    pub fn write_all<'b, I>(&mut self, entries: I, sort_keyword_attributes: bool) -> Result<usize, Error>
+    pub fn write_all<'b, I>(&mut self, entries: I, sort_keyword_attributes: bool) -> Result<usize>
     where
         I: Iterator<Item = &'b Entry>,
     {
@@ -109,7 +109,7 @@ impl Writer {
 
     /// Flushes the buffer
     /// 
-    pub fn flush(&mut self) -> Result<(), Error> {
+    pub fn flush(&mut self) -> Result<()> {
         self.internal_writer.flush()?;
         Ok(())
     }

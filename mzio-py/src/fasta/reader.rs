@@ -3,10 +3,10 @@ use std::path::PathBuf;
 
 // 3rd party modules
 use pyo3::prelude::*;
+use anyhow::Result;
 use rusteomics_proteomics_io::fasta::reader::Reader as BaseReader;
 
 // internal imports
-use crate::fasta::error::Error;
 use crate::fasta::entry::Entry;
 
 #[pyclass]
@@ -17,10 +17,10 @@ pub struct Reader {
 #[pymethods]
 impl Reader {
     #[new]
-    fn new(fasta_file_path: PathBuf) -> Result<Self, PyErr> {
+    fn new(fasta_file_path: PathBuf) -> Result<Self> {
         match BaseReader::new(&fasta_file_path) {
             Ok(base_reader) => Ok(Self{base_reader}),
-            Err(err) => Err(Error::from(err).into())
+            Err(err) => Err(err)
         }
     }
 

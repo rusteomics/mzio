@@ -5,7 +5,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use crate::fasta::entry::Entry;
-use crate::fasta::error::Error;
+use anyhow::Result;
 
 /// Reader for common FASTA files as distributed by UniProt (https://uniprot.org)
 pub struct Reader {
@@ -21,7 +21,7 @@ impl Reader {
     ///
     /// * `fasta_file_path` - Path to FASTA file
     /// 
-    pub fn new(fasta_file_path: & Path) -> Result<Self, Error> {
+    pub fn new(fasta_file_path: & Path) -> Result<Self> {
         let fasta_file: File = File::open(fasta_file_path)?;
         Ok(Self {
             internal_reader: BufReader::new(fasta_file),
