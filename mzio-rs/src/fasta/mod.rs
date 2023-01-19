@@ -21,7 +21,8 @@ mod test {
         let tmp_fasta_file_path = Path::new(TEMP_FASTA_PATH_STR);
 
         let reader = reader::Reader::new(
-            fasta_file_path
+            fasta_file_path,
+            1024
         ).unwrap();
 
         let entries: Vec<entry::Entry> = reader.into_iter().collect();

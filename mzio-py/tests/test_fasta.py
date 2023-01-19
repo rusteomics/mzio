@@ -10,7 +10,7 @@ class FastaModuleTestCase(unittest.TestCase):
     TEST_NON_EXISTING_FASTA_FILE: ClassVar[Path] = Path("../test_files/fasta/non_existing.fasta")
 
     def test_read_write(self):
-        reader = fasta.Reader(self.__class__.TEST_READ_FASTA_FILE)
+        reader = fasta.Reader(self.__class__.TEST_READ_FASTA_FILE, 1024)
 
         entries = [
             entry for entry in reader 
@@ -34,4 +34,4 @@ class FastaModuleTestCase(unittest.TestCase):
         self.__class__.TEST_WRITE_FASTA_FILE.unlink(missing_ok=True)
 
         with self.assertRaises(RuntimeError):
-            fasta.Reader(self.__class__.TEST_NON_EXISTING_FASTA_FILE)
+            fasta.Reader(self.__class__.TEST_NON_EXISTING_FASTA_FILE, 1024)

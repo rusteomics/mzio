@@ -17,8 +17,8 @@ pub struct Reader {
 #[pymethods]
 impl Reader {
     #[new]
-    fn new(fasta_file_path: PathBuf) -> Result<Self> {
-        match BaseReader::new(&fasta_file_path) {
+    fn new(fasta_file_path: PathBuf, buffer_size: usize) -> Result<Self> {
+        match BaseReader::new(&fasta_file_path, buffer_size) {
             Ok(base_reader) => Ok(Self{base_reader}),
             Err(err) => Err(err)
         }

@@ -10,7 +10,7 @@ class FastaModuleTestCase(unittest.TestCase):
     EXPECTED_NUM_OF_PROTEINS: ClassVar[int] = 37243;
 
     def test_reader(self):
-        reader = rusteomics_proteomics_io_py.fasta.Reader(Path("../test_files/fasta/mouse.fasta"))
+        reader = rusteomics_proteomics_io_py.fasta.Reader(Path("../test_files/fasta/mouse.fasta"), 1024)
         accessions: Set[str] = set()
         prot_ctr: int = 0
         for prot in reader:
