@@ -35,8 +35,8 @@ fn register_fasta_module(py: Python, parent_module: &PyModule) -> PyResult<()> {
 fn register_mgf_module(py: Python, parent_module: &PyModule) -> PyResult<()> {
     let child_module = PyModule::new(py, "mgf")?;
     child_module.add_class::<mgf::spectrum::Spectrum>()?;
-    // child_module.add_class::<mgf::reader::Reader>()?;
-    // child_module.add_class::<mgf::writer::Writer>()?;
+    child_module.add_class::<mgf::reader::Reader>()?;
+    child_module.add_class::<mgf::writer::Writer>()?;
     parent_module.add_submodule(child_module)?;
     Ok(())
 }
