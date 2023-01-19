@@ -73,10 +73,11 @@ impl Entry {
     /// * GN = acoX
     ///
     // !!! TODO Reference to HasMap is no convertible to PyResult by default.
-    // #[getter]
-    // pub fn keyword_attributes(&self) -> PyResult<&HashMap<String, String>> {
-    //     Ok(&self.base_entry.get_keyword_attributes())
-    // }
+    #[getter]
+    pub fn keyword_attributes(&self) -> PyResult<HashMap<String, String>> {
+        // TODO: avoid clone?
+        Ok(self.base_entry.get_keyword_attributes().clone())
+    }
 
     /// Returns the amino acid sequence
     ///
