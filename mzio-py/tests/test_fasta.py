@@ -7,6 +7,7 @@ from rusteomics_proteomics_io_py import fasta
 class FastaModuleTestCase(unittest.TestCase):
     TEST_READ_FASTA_FILE: ClassVar[Path] = Path("../test_files/fasta/mouse.fasta")
     TEST_WRITE_FASTA_FILE: ClassVar[Path] = Path("../test_files/fasta/mouse.fasta.tmp")
+    TEST_NON_EXISTING_FASTA_FILE: ClassVar[Path] = Path("../test_files/fasta/non_existing.fasta")
 
     def test_read_write(self):
         reader = fasta.Reader(self.__class__.TEST_READ_FASTA_FILE)
@@ -32,3 +33,5 @@ class FastaModuleTestCase(unittest.TestCase):
 
         self.__class__.TEST_WRITE_FASTA_FILE.unlink(missing_ok=True)
 
+        with self.assertRaises(RuntimeError):
+            fasta.Reader(self.__class__.TEST_NON_EXISTING_FASTA_FILE)
