@@ -2,7 +2,8 @@ from pathlib import Path
 from typing import ClassVar
 import unittest
 
-from rusteomics_proteomics_io_py import fasta
+from mzio_py import fasta
+
 
 class FastaModuleTestCase(unittest.TestCase):
     TEST_READ_FASTA_FILE: ClassVar[Path] = Path("../test_files/fasta/mouse.fasta")

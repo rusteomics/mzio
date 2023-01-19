@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 // 3rd party imports
 use pyo3::prelude::*;
-use rusteomics_proteomics_io::fasta::entry::Entry as BaseEntry;
+use mzio::fasta::entry::Entry as BaseEntry;
 
 /// Wrapper for the rust implementation entry
 /// 

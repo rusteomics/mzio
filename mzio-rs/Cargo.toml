@@ -1,18 +1,18 @@
 [package]
-name = "rusteomics-proteomics-io"
+name = "mzio"
 version = "0.1.0"
 edition = "2021"
 homepage = "https://github.com/rusteomics"
 repository = "https://github.com/rusteomics/mzio/"
 license = "Apache-2.0"
-license-file = "LICENSE"
+# license-file = "LICENSE"
 keywords = ["bioinformatics", "mass spectrometry", "proteomics", "eubic-ms"]
 categories = ["science"]
 publish = false
 
-[lib]
-name = "mzio"
-crate-type = ["cdylib"]
+# [lib]
+# name = "mzio"
+# crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = "1.0.68"

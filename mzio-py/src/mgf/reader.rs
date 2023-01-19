@@ -4,7 +4,7 @@ use std::path::PathBuf;
 // 3rd party modules
 use pyo3::prelude::*;
 use anyhow::Result;
-use rusteomics_proteomics_io::mgf::reader::Reader as BaseReader;
+use mzio::mgf::reader::Reader as BaseReader;
 
 use fallible_iterator::FallibleIterator;
 

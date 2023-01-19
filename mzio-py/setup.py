@@ -4,7 +4,7 @@ with open("Readme.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="rusteomics_proteomics_io",
+    name="mzio",
     version="0.1.0",
     author="Dirk Winkelhardt",
     author_email="dirk.winkelhardt@rub.de",

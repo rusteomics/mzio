@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import ClassVar
 import unittest
 
-from rusteomics_proteomics_io_py import mgf
+from mzio_py import mgf
 
 
 class MGFModuleTestCase(unittest.TestCase):

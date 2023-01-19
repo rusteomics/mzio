@@ -4,7 +4,7 @@ use std::path::PathBuf;
 // 3rd party modules
 use anyhow::Result;
 use pyo3::prelude::*;
-use rusteomics_proteomics_io::mgf::writer::Writer as BaseWriter;
+use mzio::mgf::writer::Writer as BaseWriter;
 
 // internal imports
 use crate::mgf::spectrum::Spectrum;

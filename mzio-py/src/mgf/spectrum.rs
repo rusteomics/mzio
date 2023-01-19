@@ -1,6 +1,6 @@
 // 3rd party imports
 use pyo3::prelude::*;
-use rusteomics_proteomics_io::mgf::spectrum::Spectrum as BaseSpectrum;
+use mzio::mgf::spectrum::Spectrum as BaseSpectrum;
 
 
 /// Wrapper for the rust implementation spectrum

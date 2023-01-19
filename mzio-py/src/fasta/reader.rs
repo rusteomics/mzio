@@ -4,7 +4,7 @@ use std::path::PathBuf;
 // 3rd party modules
 use pyo3::prelude::*;
 use anyhow::Result;
-use rusteomics_proteomics_io::fasta::reader::Reader as BaseReader;
+use mzio::fasta::reader::Reader as BaseReader;
 
 // internal imports
 use crate::fasta::entry::Entry;

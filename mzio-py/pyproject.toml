@@ -1,11 +1,11 @@
 [project]
-name = "rusteomics-proteomics-io-py"
+name = "mzio"
 requires-python = ">=3.7"
 description = "Python bindings for reading and writing utilities for mass spectrometry in Rust."
 readme = "README.md"
 keywords = ["mass spectrometry", "proteomics"]
 authors = []
-license = {file = "LICENSE"}
+# license = {file = "LICENSE"}
 dependencies = []
 dynamic = ["version"]
 classifiers = [

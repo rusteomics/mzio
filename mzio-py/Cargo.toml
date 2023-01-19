@@ -1,16 +1,16 @@
+# Keep metadata as minimal as possible in favor of pyproject.toml
 [package]
-name = "rusteomics-proteomics-io-py"
+name = "mzio-py"
 version = "0.1.0"
 publish = false
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "rusteomics_proteomics_io_py"
+name = "mzio_py"
 crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = "1.0.68"
 fallible-iterator = "0.2.0"
+mzio = { path = "../mzio-rs" }
 pyo3 = { version = "0.17.3", features = ["extension-module", "anyhow"] }
-rusteomics-proteomics-io = { path = "../mzio-rs" }

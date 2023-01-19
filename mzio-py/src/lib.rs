@@ -3,9 +3,9 @@ use pyo3::prelude::*;
 pub mod fasta;
 pub mod mgf;
 
-/// Python bindings for rusteomics_proteomics_io
+/// Python bindings for mzio
 #[pymodule]
-fn rusteomics_proteomics_io_py(py: Python, m: &PyModule) -> PyResult<()> {
+fn mzio_py(py: Python, m: &PyModule) -> PyResult<()> {
     register_fasta_module(py, m)?;
     register_mgf_module(py, m)?;
     Ok(())
