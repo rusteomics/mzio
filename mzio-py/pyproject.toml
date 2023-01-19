@@ -1,0 +1,39 @@
+[project]
+name = "mzio"
+requires-python = ">=3.7"
+description = "Python bindings for reading and writing utilities for mass spectrometry in Rust."
+readme = "README.md"
+keywords = ["mass spectrometry", "proteomics"]
+authors = []
+license = {file = "LICENSE"}
+dependencies = []
+dynamic = ["version"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "maturin",
+]
+doc = [
+    "numpydoc>=1,<2",
+    "recommonmark",
+    "semver>=2",
+    "sphinx_rtd_theme",
+    "sphinx-autobuild",
+    "sphinx-mdinclude",
+    "sphinx",
+    "toml",
+]
+
+[build-system]
+requires = ["maturin>=0.14,<0.15"]
+build-backend = "maturin"

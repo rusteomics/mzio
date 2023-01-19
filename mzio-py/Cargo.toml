@@ -1,0 +1,14 @@
+# Keep metadata as minimal as possible in favor of pyproject.toml
+[package]
+name = "mzio-py"
+version = "0.1.0"
+publish = false
+
+[lib]
+name = "mzio_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0.68"
+pyo3 = { version = "0.17.3", features = ["extension-module", "anyhow"] }
+mzcore = { path = "../mzcore-rs" }

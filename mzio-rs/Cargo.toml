@@ -1,0 +1,20 @@
+[package]
+name = "mzio"
+version = "0.1.0"
+edition = "2023"
+homepage = "https://github.com/rusteomics"
+repository = "https://github.com/rusteomics/mzio/"
+license = "Apache-2.0"
+license-file = "LICENSE"
+keywords = ["bioinformatics", "mass spectrometry", "proteomics", "eubic-ms"]
+categories = ["science"]
+publish = false
+
+[lib]
+name = "mzio"
+crate-type = ["cdylib"]
+
+[dependencies]
+anyhow = "1.0.68"
+fallible-iterator = "0.2.0"
+fast-float = "0.2.0"
