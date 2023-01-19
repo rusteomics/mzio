@@ -21,7 +21,7 @@ impl Reader {
     ///
     /// * `fasta_file_path` - Path to FASTA file
     /// 
-    pub fn new(fasta_file_path: & Path) -> Result<Self> {
+    pub fn new(fasta_file_path: &Path) -> Result<Self> {
         let fasta_file: File = File::open(fasta_file_path)?;
         Ok(Self {
             internal_reader: BufReader::new(fasta_file),
