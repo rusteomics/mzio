@@ -5,7 +5,7 @@ description = "Python bindings for reading and writing utilities for mass spectr
 readme = "README.md"
 keywords = ["mass spectrometry", "proteomics"]
 authors = []
-# license = {file = "LICENSE"}
+license = {file = "../LICENSE"}
 dependencies = []
 dynamic = ["version"]
 classifiers = [
