@@ -19,9 +19,13 @@ fn mzio_py(py: Python, m: &PyModule) -> PyResult<()> {
 /// `parent_module` - Parent module of the fasta module
 fn register_fasta_module(py: Python, parent_module: &PyModule) -> PyResult<()> {
     let child_module = PyModule::new(py, "fasta")?;
-    child_module.add_class::<fasta::entry::Entry>()?;
-    child_module.add_class::<fasta::reader::Reader>()?;
-    child_module.add_class::<fasta::writer::Writer>()?;
+    child_module.add_class::<fasta::entries::plain::Plain>()?;
+    child_module.add_class::<fasta::entries::uniprot::UniProt>()?;
+    child_module.add_class::<fasta::readers::plain::PlainReader>()?;
+    child_module.add_class::<fasta::readers::uniprot::UniProtReader>()?;
+    child_module.add_class::<fasta::writers::plain::PlainWriter>()?;
+    child_module.add_class::<fasta::writers::uniprot::UniProtWriter>()?;
+    // child_module.add_class::<fasta::writer::Writer>()?;
     parent_module.add_submodule(child_module)?;
     Ok(())
 }

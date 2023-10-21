@@ -4,37 +4,30 @@ use std::collections::HashMap;
 // 3rd party imports
 use pyo3::prelude::*;
 use mzio::fasta::entry::Entry as BaseEntry;
+use mzio::fasta::headers::{
+    Header,
+    uniprot::UniProt as BaseUniProt
+};
+
 
 /// Wrapper for the rust implementation entry
 /// 
 #[pyclass]
-pub struct Entry {
-    base_entry: BaseEntry
+pub struct UniProt {
+    base_entry: BaseEntry<BaseUniProt>
 }
 
 #[pymethods]
-impl Entry {
+impl UniProt {
     /// Python constructor
     /// 
     /// # Arguments
     /// 
-    /// * `database` - The FASTA database
-    /// * `accession` - Entry accession
-    /// * `entry_name` - Entry name
-    /// * `protein_name` - Protein name
-    /// * `keyword_attributes` - Additional keyword attributes, e.g. OX=381666
-    /// * `sequence` - Amino acid sequence
-    /// 
     #[new]
-    fn new(database: String, accession: String, entry_name: String, protein_name: String,
-        keyword_attributes: HashMap<String, String>, sequence: String) -> Self {
+    fn new(header: String, sequence: String) -> Self {
         Self {
             base_entry: BaseEntry::new(
-                database,
-                accession,
-                entry_name,
-                protein_name,
-                keyword_attributes,
+                BaseUniProt::new(&header),
                 sequence
             )
         }
@@ -44,28 +37,28 @@ impl Entry {
     ///
     #[getter]
     pub fn database(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_database())
+        Ok(&self.base_entry.get_header().get_database())
     }
 
     /// Returns the accession
     ///
     #[getter]
     pub fn accession(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_accession())
+        Ok(&self.base_entry.get_header().get_accession())
     }
 
-    /// Entry name
+    /// UniProt name
     ///
     #[getter]
     pub fn entry_name(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_entry_name())
+        Ok(&self.base_entry.get_header().get_entry_name())
     }
 
     /// Returns the protein name
     ///
     #[getter]
     pub fn protein_name(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_protein_name())
+        Ok(&self.base_entry.get_header().get_protein_name())
     }
 
     /// Returns additional keyword attributes, e.g
@@ -76,7 +69,7 @@ impl Entry {
     #[getter]
     pub fn keyword_attributes(&self) -> PyResult<HashMap<String, String>> {
         // TODO: avoid clone?
-        Ok(self.base_entry.get_keyword_attributes().clone())
+        Ok(self.base_entry.get_header().get_keyword_attributes().clone())
     }
 
     /// Returns the amino acid sequence
@@ -88,21 +81,21 @@ impl Entry {
 }
 
 
-impl From<BaseEntry> for Entry {
+impl From<BaseEntry<BaseUniProt>> for UniProt {
     /// Convert entry from the Rust implementation to the python wrapper.
     /// 
     /// # Arguments
     /// 
-    /// * `base_entry` - Entry from rust implementation
-    fn from(base_entry: BaseEntry) -> Self {
+    /// * `base_entry` - UniProt from rust implementation
+    fn from(base_entry: BaseEntry<BaseUniProt>) -> Self {
         Self {
             base_entry
         }
     }
 }
 
-impl<'a> Into<&'a BaseEntry> for &'a Entry {
-    fn into(self) -> &'a BaseEntry {
+impl<'a> Into<&'a BaseEntry<BaseUniProt>> for &'a UniProt {
+    fn into(self) -> &'a BaseEntry<BaseUniProt> {
         &self.base_entry
     }
 }
