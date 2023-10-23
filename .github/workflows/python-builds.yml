@@ -17,11 +17,11 @@ jobs:
     - name: Clone remote repository
       run: |
         git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
-        ls /home/runner/work/mzio/
+        ls /home/runner/work/mzio/mzcore
 
     - uses: PyO3/maturin-action@v1
       with:
-        manylinux: auto
+        manylinux: off # auto
         command: build
         args: -o dist --strip --find-interpreter
         working-directory: mzio-py
