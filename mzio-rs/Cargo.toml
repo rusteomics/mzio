@@ -17,6 +17,10 @@ name = "mzio"
 [dependencies]
 anyhow = "1.0.75"
 fallible-iterator = "0.2.0"
-fast-float = "0.2.0"
+fast-float = { version = "0.2.0" , optional = true }
 serde = "*"
 mzcore = { path = "../../mzcore/mzcore-rs" }
+
+[features]
+fasta = []
+mgf = ["dep:fast-float"]
