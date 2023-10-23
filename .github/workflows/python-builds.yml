@@ -16,13 +16,13 @@ jobs:
       with:
         manylinux: auto
         command: build
-        args: --release --sdist -o dist --find-interpreter
+        args: -o dist --strip --find-interpreter
         working-directory: mzio-py
     - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
 
   windows:
     runs-on: windows-latest
@@ -31,13 +31,13 @@ jobs:
     - uses: PyO3/maturin-action@v1
       with:
         command: build
-        args: --release -o dist --find-interpreter
+        args: -o dist --strip --find-interpreter
         working-directory: mzio-py
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
 
   macos:
     runs-on: macos-latest
@@ -46,13 +46,13 @@ jobs:
     - uses: PyO3/maturin-action@v1
       with:
         command: build
-        args: --release -o dist --universal2 --find-interpreter
+        args: -o dist --strip --find-interpreter --target universal2-apple-darwin
         working-directory: mzio-py
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
 
   # release:
   #   name: Release
