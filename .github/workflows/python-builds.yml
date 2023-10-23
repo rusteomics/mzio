@@ -16,7 +16,7 @@ jobs:
 
     - name: Clone remote repository
       run: |
-        git clone https://github.com/rusteomics/mzcore.git ../mzcore
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
 
     - uses: PyO3/maturin-action@v1
       with:
@@ -39,7 +39,7 @@ jobs:
 
     - name: Clone remote repository
       run: |
-        git clone https://github.com/rusteomics/mzcore.git ../mzcore
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
         ls ./
 
     - uses: PyO3/maturin-action@v1
@@ -62,7 +62,7 @@ jobs:
 
     - name: Clone remote repository
       run: |
-        git clone https://github.com/rusteomics/mzcore.git ../mzcore
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
         ls ./
 
     - uses: PyO3/maturin-action@v1
