@@ -32,6 +32,10 @@ jobs:
         name: wheels
         path: mzio-py/dist
 
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
+
   windows:
     runs-on: windows-latest
     steps:
