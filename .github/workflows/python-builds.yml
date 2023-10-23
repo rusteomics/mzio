@@ -17,6 +17,7 @@ jobs:
     - name: Clone remote repository
       run: |
         git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
+        ls ../mzcore
 
     - uses: PyO3/maturin-action@v1
       with:
@@ -40,7 +41,7 @@ jobs:
     - name: Clone remote repository
       run: |
         git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
-        ls ./
+        ls ../mzcore
 
     - uses: PyO3/maturin-action@v1
       with:
@@ -63,7 +64,7 @@ jobs:
     - name: Clone remote repository
       run: |
         git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
-        ls ./
+        ls ../mzcore
 
     - uses: PyO3/maturin-action@v1
       with:
