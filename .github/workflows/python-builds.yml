@@ -65,12 +65,9 @@ jobs:
     - name: Checkout current repository
       uses: actions/checkout@v3
 
-    - name: Checkout mzcore repository
-      uses: actions/checkout@v3
-      with:
-        repository: rusteomics/mzcore
-        token: ${{ secrets.GITHUB_TOKEN }} # Use a personal access token with appropriate permissions
-        #path: desired-path  # Specify your desired path here
+    - name: Clone remote repository
+      run: |
+        git clone https://github.com/rusteomics/mzcore.git
 
     - uses: PyO3/maturin-action@v1
       with:
