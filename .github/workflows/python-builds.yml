@@ -11,13 +11,23 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Checkout mzcore repository
+      uses: actions/checkout@v3
+      with:
+        repository: rusteomics/mzcore
+        token: ${{ secrets.GITHUB_TOKEN }} # Use a personal access token with appropriate permissions
+        #path: desired-path  # Specify your desired path here
+
     - uses: PyO3/maturin-action@v1
       with:
         manylinux: auto
         command: build
         args: -o dist --strip --find-interpreter
         working-directory: mzio-py
+
     - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
@@ -27,13 +37,23 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Checkout mzcore repository
+      uses: actions/checkout@v3
+      with:
+        repository: rusteomics/mzcore
+        token: ${{ secrets.GITHUB_TOKEN }} # Use a personal access token with appropriate permissions
+        #path: desired-path  # Specify your desired path here
+
     - uses: PyO3/maturin-action@v1
       with:
         command: build
         args: -o dist --strip --find-interpreter
         working-directory: mzio-py
-    - name: Upload wheels
+
+    - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
@@ -42,13 +62,23 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Checkout mzcore repository
+      uses: actions/checkout@v3
+      with:
+        repository: rusteomics/mzcore
+        token: ${{ secrets.GITHUB_TOKEN }} # Use a personal access token with appropriate permissions
+        #path: desired-path  # Specify your desired path here
+
     - uses: PyO3/maturin-action@v1
       with:
         command: build
         args: -o dist --strip --find-interpreter --target universal2-apple-darwin
         working-directory: mzio-py
-    - name: Upload wheels
+
+    - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
