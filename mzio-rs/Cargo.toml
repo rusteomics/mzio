@@ -10,11 +10,13 @@ keywords = ["bioinformatics", "mass spectrometry", "proteomics", "eubic-ms"]
 categories = ["science"]
 publish = false
 
-# [lib]
-# name = "mzio"
+[lib]
+name = "mzio"
 # crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.68"
+anyhow = "1.0.75"
 fallible-iterator = "0.2.0"
 fast-float = "0.2.0"
+serde = "*"
+mzcore = { path = "../../mzcore/mzcore-rs" }

@@ -10,7 +10,7 @@ name = "mzio_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-anyhow = "1.0.68"
+anyhow = "1.0.75"
 fallible-iterator = "0.2.0"
+pyo3 = { version = "0.20.0", features = ["extension-module", "anyhow"] }
 mzio = { path = "../mzio-rs" }
-pyo3 = { version = "0.17.3", features = ["extension-module", "anyhow"] }

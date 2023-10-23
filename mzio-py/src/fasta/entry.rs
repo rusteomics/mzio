@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 
 // 3rd party imports
+use anyhow::Result;
 use pyo3::prelude::*;
 use mzio::fasta::entry::Entry as BaseEntry;
 
@@ -35,7 +36,8 @@ impl Entry {
                 entry_name,
                 protein_name,
                 keyword_attributes,
-                sequence
+                sequence,
+                None
             )
         }
     }
@@ -43,29 +45,29 @@ impl Entry {
     /// Returns the database type
     ///
     #[getter]
-    pub fn database(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_database())
+    pub fn database(&self) -> Result<&String> {
+        Ok(self.base_entry.get_database())
     }
 
     /// Returns the accession
     ///
     #[getter]
-    pub fn accession(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_accession())
+    pub fn accession(&self) -> Result<&String> {
+        Ok(self.base_entry.get_accession())
     }
 
     /// Entry name
     ///
     #[getter]
-    pub fn entry_name(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_entry_name())
+    pub fn entry_name(&self) -> Result<&String> {
+        Ok(self.base_entry.get_entry_name())
     }
 
     /// Returns the protein name
     ///
     #[getter]
-    pub fn protein_name(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_protein_name())
+    pub fn protein_name(&self) -> Result<&String> {
+        Ok(self.base_entry.get_protein_name())
     }
 
     /// Returns additional keyword attributes, e.g
@@ -74,7 +76,7 @@ impl Entry {
     ///
     // !!! TODO Reference to HasMap is no convertible to PyResult by default.
     #[getter]
-    pub fn keyword_attributes(&self) -> PyResult<HashMap<String, String>> {
+    pub fn keyword_attributes(&self) -> Result<HashMap<String, String>> {
         // TODO: avoid clone?
         Ok(self.base_entry.get_keyword_attributes().clone())
     }
@@ -82,8 +84,15 @@ impl Entry {
     /// Returns the amino acid sequence
     ///
     #[getter]
-    pub fn sequence(&self) -> PyResult<&str> {
-        Ok(&self.base_entry.get_sequence())
+    pub fn sequence(&self) -> Result<&String> {
+        Ok(self.base_entry.get_sequence())
+    }
+
+    /// Returns the plain header (before parsing)
+    ///
+    #[getter]
+    pub fn plain_header(&self) -> Result<&String> {
+        Ok(self.base_entry.get_sequence())
     }
 }
 
