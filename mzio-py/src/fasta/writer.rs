@@ -1,14 +1,13 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::fasta::writer::Writer as BaseWriter;
+use mzio::fasta::writer::FastaWriter as BaseWriter;
 
 // internal imports
 use crate::fasta::entry::Entry;
-
 
 #[pyclass]
 pub struct Writer {

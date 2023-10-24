@@ -4,7 +4,7 @@ use std::collections::HashMap;
 // 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::fasta::entry::Entry as BaseEntry;
+use mzio::fasta::entry::FastaEntry as BaseEntry;
 
 /// Wrapper for the rust implementation entry
 /// 

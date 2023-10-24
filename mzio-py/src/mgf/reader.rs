@@ -1,7 +1,7 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use pyo3::prelude::*;
 use anyhow::Result;
 use fallible_iterator::FallibleIterator;

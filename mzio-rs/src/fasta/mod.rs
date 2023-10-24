@@ -1,6 +1,9 @@
 pub mod entry;
 pub mod reader;
 pub mod writer;
+pub mod prelude;
+
+pub use prelude::*;
 
 #[cfg(test)]
 mod test {
@@ -8,7 +11,6 @@ mod test {
 
     use std::fs;
     use std::path::Path;
-    use crate::fasta::writer::Writer;
 
     const FASTA_FILE_PATH_STR: &'static str = "../test_files/fasta/partial_mouse.fasta";
     const EXPECTED_NUM_PROTEINS: usize = 10;
@@ -23,7 +25,7 @@ mod test {
 
         assert!(fasta_file_path.exists(), "FASTA file not found at path: {}", FASTA_FILE_PATH_STR);
 
-        let reader = reader::Reader::new(
+        let reader = FastaReader::new(
             fasta_file_path,
             1024,
             true
@@ -33,7 +35,7 @@ mod test {
 
         for entry in reader {
 
-            let entry_as_string = Writer::stringify_entry(&entry, true, None);
+            let entry_as_string = FastaWriter::stringify_entry(&entry, true, None);
 
             assert_eq!(
                 [entry.get_plain_header().to_owned().unwrap(), entry.get_sequence().to_owned()].join("\n"),
@@ -45,7 +47,7 @@ mod test {
         }
         assert_eq!(entries.len(), EXPECTED_NUM_PROTEINS);
 
-        let mut writer = writer::Writer::new_with_default_seq_formatting(
+        let mut writer = FastaWriter::new_with_default_seq_formatting(
             tmp_fasta_file_path,
             true
         ).unwrap();

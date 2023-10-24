@@ -1,10 +1,10 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::fasta::reader::Reader as BaseReader;
+use mzio::fasta::reader::FastaReader as BaseReader;
 
 // internal imports
 use crate::fasta::entry::Entry;

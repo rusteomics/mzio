@@ -1,14 +1,18 @@
+// std imports
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::prelude::*;
 use std::path::Path;
 
-use crate::fasta::entry::Entry;
+// 3rd party imports
 use anyhow::Result;
 
+// internal imports
+use crate::fasta::entry::FastaEntry;
+
 /// Reader for common FASTA files as distributed by UniProt (https://uniprot.org)
-pub struct Reader {
+pub struct FastaReader {
     internal_reader: BufReader<File>,
     keep_plain_header: bool,
     is_eof: bool,
@@ -16,13 +20,13 @@ pub struct Reader {
     sequence: String
 }
 
-impl Reader {
+impl FastaReader {
     /// Creates a new Reader
     /// # Arguments
     ///
     /// * `fasta_file_path` - Path to FASTA file
     /// * `buffer_size` - Buffer size to use when loading bytes from disk.
-    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated Entry.
+    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated FastaEntry.
     /// 
     pub fn new(fasta_file_path: &Path, buffer_size: usize, keep_plain_header: bool) -> Result<Self> {
         let fasta_file: File = File::open(fasta_file_path)?;
@@ -53,15 +57,15 @@ impl Reader {
         }
     }
 
-    /// Creates a new Entry from the given header and sequence.
+    /// Creates a new FastaEntry from the given header and sequence.
     /// 
     /// # Arguments
     ///
     /// * `header` - A FASTA header
     /// * `sequence` - Amino acid sequence
-    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated Entry.
+    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated FastaEntry.
     /// 
-    pub fn create_entry(header: &str, sequence: &str, keep_plain_header: bool) -> Option<Entry> {
+    pub fn create_entry(header: &str, sequence: &str, keep_plain_header: bool) -> Option<FastaEntry> {
         // Split by '|' and extract database and accession 
         let mut header_split = header.split("|").collect::<Vec<&str>>();
         let mut database: String = header_split.remove(0).to_string();
@@ -98,7 +102,7 @@ impl Reader {
                         current_attr.push_str(" ");
                         current_attr.push_str(header_split.remove(0));
                     } else {
-                        Reader::prep_and_add_attribute_to_keyword_attributes(
+                        FastaReader::prep_and_add_attribute_to_keyword_attributes(
                             &current_attr, 
                             &mut keyword_attributes
                         );
@@ -109,14 +113,14 @@ impl Reader {
                 }
             }
             // Process the remaining attribute
-            Reader::prep_and_add_attribute_to_keyword_attributes(
+            FastaReader::prep_and_add_attribute_to_keyword_attributes(
                 &current_attr, 
                 &mut keyword_attributes
             );
         }
         let plain_header_opt = if keep_plain_header {Some(header.to_string())} else {None};
 
-        return Some(Entry::new(
+        return Some(FastaEntry::new(
             database,   // database
             accession,   // accession
             entry_name,
@@ -129,8 +133,8 @@ impl Reader {
 }
 
 
-impl Iterator for Reader {
-    type Item = Entry;
+impl Iterator for FastaReader {
+    type Item = FastaEntry;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.is_eof {
@@ -142,14 +146,14 @@ impl Iterator for Reader {
             if let Ok(num_bytes) = self.internal_reader.read_line(&mut line) {
                 if num_bytes == 0 {
                     self.is_eof = true;
-                    return Reader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
+                    return FastaReader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
                 }
                 line = line.as_mut_str().trim().to_string();
                 if !line.starts_with(">") && num_bytes > 0 {
                     self.sequence.push_str(&line)
                 } else {
                     if self.header.len() > 0 {
-                        let entry = Reader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
+                        let entry = FastaReader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
                         self.header = line; // save newly read header
                         return entry;
                     } else  {
@@ -195,7 +199,7 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
     /// Tests the creation of a FASTA entry from a header and a sequence.
     ///
     fn test_entry_creation() {
-        let entry = Reader::create_entry(TEST_HEADER, TEST_SEQUENCE, false).unwrap();
+        let entry = FastaReader::create_entry(TEST_HEADER, TEST_SEQUENCE, false).unwrap();
         assert_eq!(entry.get_database(), EXPECTED_DATABASE);
         assert_eq!(entry.get_accession(), EXPECTED_ACCESSION);
         assert_eq!(entry.get_entry_name(), EXPECTED_ENTRY_NAME);

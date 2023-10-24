@@ -3,7 +3,9 @@
 pub mod reader;
 pub mod spectrum;
 pub mod writer;
+pub mod prelude;
 
+pub use prelude::*;
 
 #[cfg(test)]
 mod test {
@@ -13,8 +15,8 @@ mod test {
     use std::iter::zip;
     use std::path::Path;
 
-    use fallible_iterator::IntoFallibleIterator;
-    use fallible_iterator::FallibleIterator;
+    //use fallible_iterator::IntoFallibleIterator;
+    //use fallible_iterator::FallibleIterator;
 
     const MGF_FILE_PATH_STR: &'static str = "../test_files/mgf/Velos005137.mgf";
     const EXPECTED_NUM_SPECTRA: usize = 100;
@@ -27,15 +29,15 @@ mod test {
         let mgf_file_path = Path::new(MGF_FILE_PATH_STR);
         let tmp_mgf_file_path = Path::new(TEMP_MGF_PATH_STR);
 
-        let mgf_reader = reader::MgfReader::new(
+        let mgf_reader = MgfReader::new(
             mgf_file_path,
             1024
         ).unwrap();
 
-        let entries: Vec<spectrum::MgfSpectrum> = mgf_reader.into_fallible_iter().collect().unwrap();
+        let entries: Vec<MgfSpectrum> = mgf_reader.into_fallible_iter().collect().unwrap();
         assert_eq!(entries.len(), EXPECTED_NUM_SPECTRA);
 
-        let mut mgf_writer = writer::MgfWriter::new(
+        let mut mgf_writer = MgfWriter::new(
             tmp_mgf_file_path
         ).unwrap();
 

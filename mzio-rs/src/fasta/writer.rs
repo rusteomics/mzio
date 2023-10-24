@@ -1,24 +1,28 @@
+// std imports
 use std::fs::File;
 use std::io::BufWriter;
 use std::io::prelude::*;
 use std::path::Path;
 
-use crate::fasta::entry::Entry;
+// 3rd party imports
 use anyhow::Result;
+
+// internal imports
+use crate::fasta::entry::FastaEntry;
 
 /// DEFAULT max amino acids per sequence line.
 const DEFAULT_MAX_AMINO_ACIDS_PER_LINE: usize = 60;
 
 /// Writer for common FASTA files as distributed by UniProt (https://uniprot.org)
 /// Use flush() to mak ensure the buffer is written completely.
-pub struct Writer {
+pub struct FastaWriter {
     /// Max amino acids per sequence line.
     max_amino_acids_per_line: Option<usize>,
     sort_keyword_attributes: bool,
     internal_writer: BufWriter<File>
 }
 
-impl Writer {
+impl FastaWriter {
     /// Creates a new Writer
     /// 
     /// # Arguments
@@ -78,7 +82,7 @@ impl Writer {
     /// * `entry` - FASTA entry
     /// * `sort_keyword_attributes` - If true the keyword attributes will be sorted (for testing and readability reasons)
     /// 
-    fn create_header(entry: &Entry, sort_keyword_attributes: bool) -> String {
+    fn create_header(entry: &FastaEntry, sort_keyword_attributes: bool) -> String {
         let mut header = ">".to_string();
         header.push_str(entry.get_database());
         header.push_str("|");
@@ -124,7 +128,7 @@ impl Writer {
     /// * `sort_keyword_attributes` - If true the keyword attributes will be sorted (for testing and readability reasons)
     /// * `max_amino_acids_per_line` - If Some(), will format the sequence line to not exceed the given length.
     ///
-    pub fn stringify_entry(entry: &Entry, sort_keyword_attributes: bool, max_amino_acids_per_line: Option<usize>) -> String {
+    pub fn stringify_entry(entry: &FastaEntry, sort_keyword_attributes: bool, max_amino_acids_per_line: Option<usize>) -> String {
 
         let header_as_string = Self::create_header(entry, sort_keyword_attributes);
 
@@ -143,7 +147,7 @@ impl Writer {
     ///
     /// * `entry` - FASTA entry
     ///
-    pub fn write_entry(&mut self, entry: &Entry) -> Result<usize> {
+    pub fn write_entry(&mut self, entry: &FastaEntry) -> Result<usize> {
         let mut entry_as_string = Self::stringify_entry(entry, self.sort_keyword_attributes, self.max_amino_acids_per_line);
         entry_as_string.push_str("\n");
 
@@ -160,7 +164,7 @@ impl Writer {
     ///
     pub fn write_all<'b, I>(&mut self, entries: I) -> Result<usize>
     where
-        I: Iterator<Item = &'b Entry>,
+        I: Iterator<Item = &'b FastaEntry>,
     {
         let mut written_bytes: usize = 0;
         for entry in entries {
@@ -212,14 +216,14 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
     /// Tests the creation of a FASTA entry from a header and a sequence.
     ///
     fn test_sequence_formatting() {
-        let formatted_sequence  = Writer::format_sequence(TEST_SEQUENCE, DEFAULT_MAX_AMINO_ACIDS_PER_LINE);
+        let formatted_sequence  = FastaWriter::format_sequence(TEST_SEQUENCE, DEFAULT_MAX_AMINO_ACIDS_PER_LINE);
         assert_eq!(formatted_sequence, EXPECTED_SEQUENCE)
     }
 
     #[test]
     /// Reads a FASTA file, parses the proteins and counts protein
     fn test_header_creation() {
-        let entry = Entry::new(
+        let entry = FastaEntry::new(
             TEST_DATABASE.to_string(),
             TEST_ACCESSION.to_string(),
             TEST_ENTRY_NAME.to_string(),
@@ -228,7 +232,7 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
             TEST_SEQUENCE.to_string(),
             None
         );
-        let header = Writer::create_header(&entry, true);
+        let header = FastaWriter::create_header(&entry, true);
         assert_eq!(header, EXPECTED_HEADER);
     }
 }

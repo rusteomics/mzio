@@ -2,7 +2,6 @@
 use pyo3::prelude::*;
 use mzio::mgf::spectrum::MgfSpectrum as BaseMgfSpectrum;
 
-
 /// Wrapper for the rust implementation spectrum
 /// 
 #[pyclass]

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 /// Keeps all information of FASTA entry
-pub struct Entry {
+pub struct FastaEntry {
     database: String,
     accession: String,
     entry_name: String,
@@ -11,7 +11,7 @@ pub struct Entry {
     plain_header: Option<String>
 }
 
-impl Entry {
+impl FastaEntry {
     /// Creates a new FASTA entry
     /// # Arguments
     ///

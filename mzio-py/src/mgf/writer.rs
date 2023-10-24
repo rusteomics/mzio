@@ -1,14 +1,13 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::mgf::writer::MgfWriter as BaseMgfWriter;
-
-// internal imports
 use crate::mgf::spectrum::MgfSpectrum;
 
+// internal imports
+use mzio::mgf::writer::MgfWriter as BaseMgfWriter;
 
 #[pyclass]
 pub struct MgfWriter {
