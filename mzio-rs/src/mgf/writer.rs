@@ -40,21 +40,34 @@ impl MgfWriter {
         let spec_header = &spectrum.header;
 
         let mut written_bytes: usize = 0;
-        written_bytes += self.internal_writer.write("BEGIN IONS\n".as_bytes())?;
-        written_bytes += self.internal_writer.write(format!("TITLE={}\n", spec_header.get_title()).as_bytes())?;
-        written_bytes += self.internal_writer.write(format!("PEPMASS={}", spec_header.get_precursor_mz()).as_bytes())?;
+
+        written_bytes += self._write_str("BEGIN IONS\n")?;
+        written_bytes += self._write_string(format!("TITLE={}\n", spec_header.get_title()))?;
+        written_bytes += self._write_string(format!("PEPMASS={}", spec_header.get_precursor_mz()))?;
+
         if let Some(retention_time) = spec_header.get_retention_time() {
-            written_bytes += self.internal_writer.write(format!("\nRTINSECONDS={}", retention_time).as_bytes())?;
+            written_bytes += self._write_string(format!("\nRTINSECONDS={}", retention_time))?;
         }
         if let Some(charge) = spec_header.get_precursor_charge() {
             let charge_sign = if charge < 0 { '-'} else { '+' };
-            written_bytes += self.internal_writer.write(format!("\nCHARGE={}{}", charge, charge_sign).as_bytes())?;
+            written_bytes += self._write_string(format!("\nCHARGE={}{}", charge, charge_sign))?;
         }
         for (mz, intensity) in zip(spectrum.get_mz_list(), spectrum.get_intensity_list()) {
-            written_bytes += self.internal_writer.write(format!("\n{mz} {intensity}").as_bytes())?;
+            written_bytes += self._write_string(format!("\n{mz} {intensity}"))?;
         }
-        written_bytes += self.internal_writer.write("\nEND IONS\n".as_bytes())?;
-        return Ok(written_bytes);
+        written_bytes += self._write_str("\nEND IONS\n")?;
+
+        Ok(written_bytes)
+    }
+
+    #[inline(always)]
+    fn _write_str(&mut self, str: &str) -> Result<usize> {
+        Ok(self.internal_writer.write(str.as_bytes())?)
+    }
+
+    #[inline(always)]
+    fn _write_string(&mut self, string: String) -> Result<usize> {
+        Ok(self.internal_writer.write(string.as_bytes())?)
     }
 
     /// Writes multiple spectra to file.
