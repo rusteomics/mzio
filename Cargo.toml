@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "mzio-rs",
+    "mzio-py"
+]

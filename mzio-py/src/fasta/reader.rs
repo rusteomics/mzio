@@ -1,10 +1,10 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
-use pyo3::prelude::*;
+// 3rd party imports
 use anyhow::Result;
-use mzio::fasta::reader::Reader as BaseReader;
+use pyo3::prelude::*;
+use mzio::fasta::reader::FastaReader as BaseReader;
 
 // internal imports
 use crate::fasta::entry::Entry;
@@ -17,8 +17,9 @@ pub struct Reader {
 #[pymethods]
 impl Reader {
     #[new]
-    fn new(fasta_file_path: PathBuf, buffer_size: usize) -> Result<Self> {
-        match BaseReader::new(&fasta_file_path, buffer_size) {
+    fn new(fasta_file_path: PathBuf, buffer_size: usize, keep_plain_header: bool) -> Result<Self> {
+        match BaseReader::new(&fasta_file_path, buffer_size, keep_plain_header
+        ) {
             Ok(base_reader) => Ok(Self{base_reader}),
             Err(err) => Err(err)
         }

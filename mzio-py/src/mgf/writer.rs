@@ -1,22 +1,21 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::mgf::writer::Writer as BaseWriter;
+use crate::mgf::spectrum::MgfSpectrum;
 
 // internal imports
-use crate::mgf::spectrum::Spectrum;
-
+use mzio::mgf::writer::MgfWriter as BaseMgfWriter;
 
 #[pyclass]
-pub struct Writer {
-    base_writer: BaseWriter
+pub struct MgfWriter {
+    base_writer: BaseMgfWriter
 }
 
 #[pymethods]
-impl Writer {
+impl MgfWriter {
     /// Creates a new Writer
     /// 
     /// # Arguments
@@ -24,25 +23,25 @@ impl Writer {
     /// * `mgf_file_path` - Path to MGF file
     /// 
     #[new]
-    pub fn new(mgf_file_path: PathBuf) -> PyResult<Self> {
-        match BaseWriter::new(&mgf_file_path) {
-            Ok(base_writer) => Ok(Self{base_writer}),
-            Err(err) => Err(err.into())
-        }
+    pub fn new(mgf_file_path: PathBuf) -> Result<Self> {
+        let base_writer = BaseMgfWriter::new(&mgf_file_path)?;
+        Ok(Self {base_writer})
     }
 
-    pub fn write_spectrum(&mut self, spectrum: &Spectrum) -> Result<usize> {
-        match self.base_writer.write_spectrum(spectrum.into()) {
+    pub fn write_spectrum(&mut self, spectrum: &MgfSpectrum) -> Result<usize> {
+        self.base_writer.write_spectrum(spectrum.into())
+        /*match self.base_writer.write_spectrum(spectrum.into()) {
             Ok(written_bytes) => Ok(written_bytes),
             Err(err) => Err(err)
-        }
+        }*/
     }
 
 
     pub fn flush(&mut self) -> Result<()> {
-        match self.base_writer.flush() {
+        self.base_writer.flush()
+        /*match self.base_writer.flush() {
             Ok(_) => Ok(()),
             Err(err) => Err(err)
-        }
+        }*/
     }
 }

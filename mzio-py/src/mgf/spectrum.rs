@@ -1,17 +1,17 @@
 // 3rd party imports
 use pyo3::prelude::*;
-use mzio::mgf::spectrum::Spectrum as BaseSpectrum;
-
+use mzio::mgf::spectrum::MgfSpectrum as BaseMgfSpectrum;
 
 /// Wrapper for the rust implementation spectrum
 /// 
 #[pyclass]
-pub struct Spectrum {
-    base_spectrum: BaseSpectrum
+#[derive(Clone, Debug)]
+pub struct MgfSpectrum {
+    base_spectrum: BaseMgfSpectrum
 }
 
 #[pymethods]
-impl Spectrum {
+impl MgfSpectrum {
     /// Python constructor
     /// 
     /// # Arguments
@@ -24,10 +24,16 @@ impl Spectrum {
     /// * `intensity_list` -  Intensity list
     /// 
     #[new]
-    fn new(title: String, precursor_mz: f64, precursor_charge: Option<i8>,
-        retention_time: Option<f64>, mz_list: Vec<f64>, intensity_list: Vec<f32>) -> Self {
+    fn new(
+        mz_list: Vec<f64>,
+        intensity_list: Vec<f32>,
+        title: String,
+        precursor_mz: f64,
+        precursor_charge: Option<i8>,
+        retention_time: Option<f64>
+    ) -> Self {
         Self {
-            base_spectrum: BaseSpectrum::new(
+            base_spectrum: BaseMgfSpectrum::new(
                 title,
                 precursor_mz,
                 precursor_charge,
@@ -41,62 +47,62 @@ impl Spectrum {
     /// Returns the spectrum title
     ///
     #[getter]
-    pub fn title(&self) -> PyResult<&str> {
-        Ok(&self.base_spectrum.get_title())
+    pub fn title(&self) -> String {
+        self.base_spectrum.header.get_title().to_owned()
     }
 
     /// Returns the precursor mz
     ///
     #[getter]
-    pub fn precursor_mz(&self) -> PyResult<f64> {
-        Ok(self.base_spectrum.get_precursor_mz())
+    pub fn precursor_mz(&self) -> f64 {
+        self.base_spectrum.header.get_precursor_mz()
     }
 
     /// Returns the precursor charge
     ///
     #[getter]
-    pub fn precursor_charge(&self) -> PyResult<Option<i8>> {
-        Ok(*self.base_spectrum.get_precursor_charge())
+    pub fn precursor_charge(&self) -> Option<i8> {
+        self.base_spectrum.header.get_precursor_charge()
     }
 
     /// Returns the retention time
     ///
     #[getter]
-    pub fn retention_time(&self) -> PyResult<Option<f64>> {
-        Ok(*self.base_spectrum.get_retention_time())
+    pub fn retention_time(&self) -> Option<f64> {
+        self.base_spectrum.header.get_retention_time()
     }
 
     /// Returns the mzs
     ///
     #[getter]
-    pub fn mzs(&self) -> PyResult<Vec<f64>> {
-        Ok(self.base_spectrum.get_mz_list().to_vec())
+    pub fn mzs(&self) -> Vec<f64> {
+        self.base_spectrum.get_mz_list().to_owned()
     }
 
     /// Returns the intensities
     ///
     #[getter]
-    pub fn intensities(&self) -> PyResult<Vec<f32>> {
-        Ok(self.base_spectrum.get_intensity_list().to_vec())
+    pub fn intensities(&self) -> Vec<f32> {
+        self.base_spectrum.get_intensity_list().to_owned()
     }
 }
 
 
-impl From<BaseSpectrum> for Spectrum {
+impl From<BaseMgfSpectrum> for MgfSpectrum {
     /// Convert entry from the Rust implementation to the python wrapper.
     /// 
     /// # Arguments
     /// 
     /// * `base_spectrum` - Spectrum from rust implementation
-    fn from(base_spectrum: BaseSpectrum) -> Self {
+    fn from(base_spectrum: BaseMgfSpectrum) -> Self {
         Self {
             base_spectrum
         }
     }
 }
 
-impl<'a> Into<&'a BaseSpectrum> for &'a Spectrum {
-    fn into(self) -> &'a BaseSpectrum {
+impl<'a> Into<&'a BaseMgfSpectrum> for &'a MgfSpectrum {
+    fn into(self) -> &'a BaseMgfSpectrum {
         &self.base_spectrum
     }
 }

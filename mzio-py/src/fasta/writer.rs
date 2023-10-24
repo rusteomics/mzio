@@ -1,14 +1,13 @@
 // std imports
 use std::path::PathBuf;
 
-// 3rd party modules
+// 3rd party imports
 use anyhow::Result;
 use pyo3::prelude::*;
-use mzio::fasta::writer::Writer as BaseWriter;
+use mzio::fasta::writer::FastaWriter as BaseWriter;
 
 // internal imports
 use crate::fasta::entry::Entry;
-
 
 #[pyclass]
 pub struct Writer {
@@ -24,15 +23,15 @@ impl Writer {
     /// * `fasta_file_path` - Path to FASTA file
     /// 
     #[new]
-    pub fn new(fasta_file_path: PathBuf) -> PyResult<Self> {
-        match BaseWriter::new(&fasta_file_path) {
+    pub fn new(fasta_file_path: PathBuf, sort_keyword_attributes: bool) -> PyResult<Self> {
+        match BaseWriter::new_with_default_seq_formatting(&fasta_file_path, sort_keyword_attributes) {
             Ok(base_writer) => Ok(Self{base_writer}),
             Err(err) => Err(err.into())
         }
     }
 
-    pub fn write_entry(&mut self, entry: &Entry, sort_keyword_attributes: bool) -> Result<usize> {
-        match self.base_writer.write_entry(entry.into(), sort_keyword_attributes) {
+    pub fn write_entry(&mut self, entry: &Entry) -> Result<usize> {
+        match self.base_writer.write_entry(entry.into()) {
             Ok(written_bytes) => Ok(written_bytes),
             Err(err) => Err(err)
         }
