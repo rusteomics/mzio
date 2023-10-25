@@ -4,36 +4,37 @@ use std::path::PathBuf;
 // 3rd party modules
 use pyo3::prelude::*;
 use anyhow::Result;
-use mzio::mgf::reader::Reader as BaseReader;
-
 use fallible_iterator::FallibleIterator;
+use mzio::mgf::reader::MgfReader as BaseMgfReader;
 
 // internal imports
-use crate::mgf::spectrum::Spectrum;
+use crate::mgf::spectrum::MgfSpectrum;
 
 #[pyclass]
-pub struct Reader {
-    base_reader: BaseReader
+pub struct MgfReader {
+    base_reader: BaseMgfReader
 }
 
 #[pymethods]
-impl Reader {
+impl MgfReader {
     #[new]
-    #[args(buffer_size=4096)]
+    #[pyo3(signature = (mgf_file_path, buffer_size=4096))]
     fn new(mgf_file_path: PathBuf, buffer_size: usize) -> Result<Self> {
-        match BaseReader::new(&mgf_file_path, buffer_size) {
+        let base_reader = BaseMgfReader::new(&mgf_file_path, buffer_size)?;
+        Ok(Self{base_reader})
+        /*match BaseReader::new(&mgf_file_path, buffer_size) {
             Ok(base_reader) => Ok(Self{base_reader}),
             Err(err) => Err(err)
-        }
+        }*/
     }
 
     fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
         slf
     }
 
-    fn __next__(mut slf: PyRefMut<'_, Self>) -> Option<Spectrum> {
+    fn __next__(mut slf: PyRefMut<'_, Self>) -> Option<MgfSpectrum> {
         match slf.base_reader.next().ok()? {
-            Some(base_spectrum) => Some(Spectrum::from(base_spectrum)),
+            Some(base_spectrum) => Some(MgfSpectrum::from(base_spectrum)),
             None => None
         }
     }

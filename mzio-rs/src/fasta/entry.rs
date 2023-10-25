@@ -7,7 +7,8 @@ pub struct Entry {
     entry_name: String,
     protein_name: String,
     keyword_attributes: HashMap<String, String>,
-    sequence: String
+    sequence: String,
+    plain_header: Option<String>
 }
 
 impl Entry {
@@ -22,38 +23,39 @@ impl Entry {
     /// * `sequence` - Amino acid sequence
     /// 
     pub fn new(database: String, accession: String, entry_name: String, protein_name: String,
-        keyword_attributes: HashMap<String, String>, sequence: String) -> Self {
+        keyword_attributes: HashMap<String, String>, sequence: String, plain_header: Option<String>) -> Self {
             Self {
                 database,
                 accession,
                 entry_name,
                 protein_name,
                 keyword_attributes,
-                sequence
+                sequence,
+                plain_header,
             }
         }
 
         /// Returns the database type
         ///
-        pub fn get_database(&self) -> &str {
-            &self.database.as_str()
+        pub fn get_database(&self) -> &String {
+            &self.database
         }
 
         /// Returns the accession
         ///
-        pub fn get_accession(&self) -> &str {
+        pub fn get_accession(&self) -> &String {
             &self.accession
         }
 
         /// Entry name
         ///
-        pub fn get_entry_name(&self) -> &str {
+        pub fn get_entry_name(&self) -> &String {
             &self.entry_name
         }
 
         /// Returns the protein name
         ///
-        pub fn get_protein_name(&self) -> &str {
+        pub fn get_protein_name(&self) -> &String {
             &self.protein_name
         }
 
@@ -67,7 +69,13 @@ impl Entry {
 
         /// Returns the amino acid sequence
         /// 
-        pub fn get_sequence(&self) -> &str {
+        pub fn get_sequence(&self) -> &String {
             &self.sequence
+        }
+
+        /// Returns the plain header (before parsing)
+        ///
+        pub fn get_plain_header(&self) -> &Option<String> {
+            &self.plain_header
         }
 }

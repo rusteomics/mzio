@@ -10,6 +10,7 @@ use anyhow::Result;
 /// Reader for common FASTA files as distributed by UniProt (https://uniprot.org)
 pub struct Reader {
     internal_reader: BufReader<File>,
+    keep_plain_header: bool,
     is_eof: bool,
     header: String,
     sequence: String
@@ -20,11 +21,14 @@ impl Reader {
     /// # Arguments
     ///
     /// * `fasta_file_path` - Path to FASTA file
+    /// * `buffer_size` - Buffer size to use when loading bytes from disk.
+    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated Entry.
     /// 
-    pub fn new(fasta_file_path: &Path, buffer_size: usize) -> Result<Self> {
+    pub fn new(fasta_file_path: &Path, buffer_size: usize, keep_plain_header: bool) -> Result<Self> {
         let fasta_file: File = File::open(fasta_file_path)?;
         Ok(Self {
             internal_reader: BufReader::with_capacity(buffer_size, fasta_file),
+            keep_plain_header,
             is_eof: false,
             header: String::new(),
             sequence: String::new()
@@ -55,8 +59,9 @@ impl Reader {
     ///
     /// * `header` - A FASTA header
     /// * `sequence` - Amino acid sequence
+    /// * `keep_plain_header` - Whether to keep or not the plain read header in the generated Entry.
     /// 
-    pub fn create_entry(header: &str, sequence: &str) -> Option<Entry> {
+    pub fn create_entry(header: &str, sequence: &str, keep_plain_header: bool) -> Option<Entry> {
         // Split by '|' and extract database and accession 
         let mut header_split = header.split("|").collect::<Vec<&str>>();
         let mut database: String = header_split.remove(0).to_string();
@@ -109,13 +114,16 @@ impl Reader {
                 &mut keyword_attributes
             );
         }
+        let plain_header_opt = if keep_plain_header {Some(header.to_string())} else {None};
+
         return Some(Entry::new(
             database,   // database
             accession,   // accession
             entry_name,
             protein_name,
             keyword_attributes,
-            sequence.replace("\n", "")
+            sequence.replace("\n", ""),
+            plain_header_opt
         ));
     }
 }
@@ -134,15 +142,15 @@ impl Iterator for Reader {
             if let Ok(num_bytes) = self.internal_reader.read_line(&mut line) {
                 if num_bytes == 0 {
                     self.is_eof = true;
-                    return Reader::create_entry(&self.header, &self.sequence);
+                    return Reader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
                 }
                 line = line.as_mut_str().trim().to_string();
                 if !line.starts_with(">") && num_bytes > 0 {
                     self.sequence.push_str(&line)
                 } else {
                     if self.header.len() > 0 {
-                        let entry = Reader::create_entry(&self.header, &self.sequence);
-                        self.header = line; // safe newly read header
+                        let entry = Reader::create_entry(&self.header, &self.sequence, self.keep_plain_header);
+                        self.header = line; // save newly read header
                         return entry;
                     } else  {
                         self.header = line; 
@@ -153,7 +161,6 @@ impl Iterator for Reader {
         
     }
 }
-
 
 #[cfg(test)]
 mod test {
@@ -188,7 +195,7 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
     /// Tests the creation of a FASTA entry from a header and a sequence.
     ///
     fn test_entry_creation() {
-        let entry = Reader::create_entry(TEST_HEADER, TEST_SEQUENCE).unwrap();
+        let entry = Reader::create_entry(TEST_HEADER, TEST_SEQUENCE, false).unwrap();
         assert_eq!(entry.get_database(), EXPECTED_DATABASE);
         assert_eq!(entry.get_accession(), EXPECTED_ACCESSION);
         assert_eq!(entry.get_entry_name(), EXPECTED_ENTRY_NAME);

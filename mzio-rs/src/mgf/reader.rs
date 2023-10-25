@@ -10,14 +10,14 @@ use anyhow::{Result, bail};
 use fallible_iterator::FallibleIterator;
 
 // internal imports
-use crate::mgf::spectrum::Spectrum;
+use crate::mgf::spectrum::MgfSpectrum;
 
 /// Reader for MGF
-pub struct Reader {
+pub struct MgfReader {
     internal_reader: BufReader<File>
 }
 
-impl Reader {
+impl MgfReader {
     /// Creates a new Reader
     /// 
     /// # Arguments
@@ -32,8 +32,8 @@ impl Reader {
     }
 }
 
-impl FallibleIterator for Reader {
-    type Item = Spectrum;
+impl FallibleIterator for MgfReader {
+    type Item = MgfSpectrum;
     type Error = anyhow::Error;
 
     fn next(&mut self) -> Result<Option<Self::Item>> {
@@ -55,36 +55,21 @@ impl FallibleIterator for Reader {
                     }
                     return Ok(None);
                 }
+
                 line = line.as_mut_str().trim().to_string();
                 if line.is_empty() {
                     continue
                 }
 
-                if line.chars().nth(0).unwrap().is_numeric() {
-                    let mut split = line.split_ascii_whitespace();
+                let first_char = line.chars().next().unwrap();
 
-                    match split.next() {
-                        Some(mz) => mz_list.push(fast_float::parse(mz)?),
-                        None => bail!("mz value is missing")
-                    };
-
-                    match split.next() {
-                        Some(intens) => intensity_list.push(fast_float::parse(intens)?),
-                        None => bail!("intensity value is missing")
-                    };
-
-                } else if line.starts_with("TITLE=") {
-                    title = line[6..].to_owned();
-                } else if line.starts_with("PEPMASS=") {
-                    precursor_mz = fast_float::parse(&line[8..])?;
-                } else if line.starts_with("RTINSECONDS=") {
-                    retention_time = Some(fast_float::parse(&line[12..])?);
-                } else if line.starts_with("CHARGE=") {
-                    precursor_charge = Some(line[7..].parse()?);
-                } else if line == "BEGIN IONS" {
+                if first_char == 'B' && line.starts_with("BEGIN IONS") {
                     in_spectrum = true;
-                } else if line == "END IONS" {
-                    return Ok(Some(Spectrum::new(
+                } else if first_char == 'E' && line.starts_with("END IONS") {
+
+                    //in_spectrum = false;
+
+                    return Ok(Some(MgfSpectrum::new(
                         title,
                         precursor_mz,
                         precursor_charge,
@@ -92,8 +77,50 @@ impl FallibleIterator for Reader {
                         mz_list,
                         intensity_list
                     )));
-                }
-            }
-        }
+                } else if in_spectrum {
+                    // if line contains a peak
+                    if first_char.is_numeric() {
+                        let mut split = line.split_ascii_whitespace();
+
+                        match split.next() {
+                            Some(mz) => mz_list.push(fast_float::parse(mz)?),
+                            None => bail!("m/z value is missing")
+                        };
+
+                        match split.next() {
+                            Some(intens) => intensity_list.push(fast_float::parse(intens)?),
+                            None => bail!("intensity value is missing")
+                        };
+
+                    } else {
+                        if line.starts_with("TITLE=") {
+                            title = line[6..].to_owned();
+                        } else if line.starts_with("PEPMASS=") {
+                            let prec_mz_str_opt = &line[8..].split_ascii_whitespace().next();
+                            precursor_mz = fast_float::parse(prec_mz_str_opt.unwrap_or_else(|| "0.0"))?;
+                        } else if line.starts_with("RTINSECONDS=") {
+                            retention_time = Some(fast_float::parse(&line[12..])?);
+                        } else if line.starts_with("CHARGE=") {
+                            // Locate the value and its sign within the string
+                            let value = &line[7..];
+                            let mut chars = value.chars();
+                            let charge_sign_idx = chars.position(|c| !c.is_numeric()).unwrap_or(value.len());
+
+                            // Parse the charge value
+                            let charge_str = &value[0..charge_sign_idx];
+                            let mut charge = charge_str.parse()?;
+
+                            // Parse the charge sign and update the value accordingly
+                            let sign = chars.nth(charge_sign_idx).unwrap_or('+');
+                            if sign == '-' {
+                                charge *= -1;
+                            }
+
+                            precursor_charge = Some(charge);
+                        }
+                    }
+                } // ends else if in_spectrum
+            } // ends read_line
+        } // ends loop
     }
 }

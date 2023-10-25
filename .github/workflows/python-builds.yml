@@ -11,48 +11,76 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Clone remote repository
+      run: |
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
+        ls /home/runner/work/mzio/mzcore
+
     - uses: PyO3/maturin-action@v1
       with:
-        manylinux: auto
+        manylinux: off # auto
         command: build
-        args: --release --sdist -o dist --find-interpreter
+        args: -o dist --strip --find-interpreter
         working-directory: mzio-py
+
     - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
+
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
 
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Clone remote repository
+      run: |
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
+        ls ../mzcore
+
     - uses: PyO3/maturin-action@v1
       with:
         command: build
-        args: --release -o dist --find-interpreter
+        args: -o dist --strip --find-interpreter
         working-directory: mzio-py
-    - name: Upload wheels
+
+    - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
 
   macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout current repository
+      uses: actions/checkout@v3
+
+    - name: Clone remote repository
+      run: |
+        git clone https://github.com/david-bouyssie/mzcore.git ../mzcore
+        ls ../mzcore
+
     - uses: PyO3/maturin-action@v1
       with:
         command: build
-        args: --release -o dist --universal2 --find-interpreter
+        args: -o dist --strip --find-interpreter --target universal2-apple-darwin
         working-directory: mzio-py
-    - name: Upload wheels
+
+    - name: Upload wheels to artifact
       uses: actions/upload-artifact@v3
       with:
         name: wheels
-        path: dist
+        path: mzio-py/dist
 
   # release:
   #   name: Release
