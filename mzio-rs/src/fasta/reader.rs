@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::BufReader;
 use std::io::prelude::*;
+use std::io::BufReader;
 use std::path::Path;
 
 use crate::fasta::entry::Entry;
@@ -12,7 +12,7 @@ pub struct Reader {
     internal_reader: BufReader<File>,
     is_eof: bool,
     header: String,
-    sequence: String
+    sequence: String,
 }
 
 impl Reader {
@@ -20,14 +20,14 @@ impl Reader {
     /// # Arguments
     ///
     /// * `fasta_file_path` - Path to FASTA file
-    /// 
+    ///
     pub fn new(fasta_file_path: &Path, buffer_size: usize) -> Result<Self> {
         let fasta_file: File = File::open(fasta_file_path)?;
         Ok(Self {
             internal_reader: BufReader::with_capacity(buffer_size, fasta_file),
             is_eof: false,
             header: String::new(),
-            sequence: String::new()
+            sequence: String::new(),
         })
     }
 
@@ -36,28 +36,28 @@ impl Reader {
     ///
     /// * `raw_attr` - Raw attributes, e.g. `key=value with spaces`
     /// * `keyword_attributes` - Additional keyword attributes
-    /// 
-    fn prep_and_add_attribute_to_keyword_attributes(raw_attr: &str, keyword_attributes: &mut HashMap<String, String>) {
+    ///
+    fn prep_and_add_attribute_to_keyword_attributes(
+        raw_attr: &str,
+        keyword_attributes: &mut HashMap<String, String>,
+    ) {
         let attr_split = raw_attr.split("=").collect::<Vec<&str>>();
         if let Some(key) = attr_split.get(0) {
             if let Some(value) = attr_split.get(1) {
-                keyword_attributes.insert(
-                    key.to_string(),
-                    value.to_string()
-                );
+                keyword_attributes.insert(key.to_string(), value.to_string());
             }
         }
     }
 
     /// Creates a new Entry from the given header and sequence.
-    /// 
+    ///
     /// # Arguments
     ///
     /// * `header` - A FASTA header
     /// * `sequence` - Amino acid sequence
-    /// 
+    ///
     pub fn create_entry(header: &str, sequence: &str) -> Option<Entry> {
-        // Split by '|' and extract database and accession 
+        // Split by '|' and extract database and accession
         let mut header_split = header.split("|").collect::<Vec<&str>>();
         let mut database: String = header_split.remove(0).to_string();
         database = database.as_str()[1..].to_string(); // remove '>'
@@ -66,9 +66,9 @@ impl Reader {
         // Split by ' '
         header_split = header_split.remove(0).split(" ").collect::<Vec<&str>>();
 
-        // Extract entry name 
+        // Extract entry name
         let entry_name: String = header_split.remove(0).to_string();
-        // Add chunks to protein name until first string with '=' occurs (begin of keyword attributes) 
+        // Add chunks to protein name until first string with '=' occurs (begin of keyword attributes)
         let mut protein_name: String = header_split.remove(0).to_string();
         loop {
             if let Some(chunk) = header_split.get(0) {
@@ -76,7 +76,7 @@ impl Reader {
                     protein_name.push_str(" ");
                     protein_name.push_str(header_split.remove(0));
                 } else {
-                    break
+                    break;
                 }
             }
         }
@@ -94,8 +94,8 @@ impl Reader {
                         current_attr.push_str(header_split.remove(0));
                     } else {
                         Reader::prep_and_add_attribute_to_keyword_attributes(
-                            &current_attr, 
-                            &mut keyword_attributes
+                            &current_attr,
+                            &mut keyword_attributes,
                         );
                         if header_split.len() > 0 {
                             current_attr = header_split.remove(0).to_string();
@@ -105,21 +105,20 @@ impl Reader {
             }
             // Process the remaining attribute
             Reader::prep_and_add_attribute_to_keyword_attributes(
-                &current_attr, 
-                &mut keyword_attributes
+                &current_attr,
+                &mut keyword_attributes,
             );
         }
         return Some(Entry::new(
-            database,   // database
-            accession,   // accession
+            database,  // database
+            accession, // accession
             entry_name,
             protein_name,
             keyword_attributes,
-            sequence.replace("\n", "")
+            sequence.replace("\n", ""),
         ));
     }
 }
-
 
 impl Iterator for Reader {
     type Item = Entry;
@@ -144,23 +143,22 @@ impl Iterator for Reader {
                         let entry = Reader::create_entry(&self.header, &self.sequence);
                         self.header = line; // safe newly read header
                         return entry;
-                    } else  {
-                        self.header = line; 
+                    } else {
+                        self.header = line;
                     }
                 }
             }
         }
-        
     }
 }
-
 
 #[cfg(test)]
 mod test {
     use super::*;
 
     const TEST_HEADER: &'static str = ">sp|P27748|ACOX_CUPNH Acetoin catabolism protein X OS=Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337) OX=381666 GN=acoX PE=4 SV=2";
-    const TEST_SEQUENCE: &'static str = "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER
+    const TEST_SEQUENCE: &'static str =
+        "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER
 VLMMPDREGLRVMLARHLARRQGPDSGLPAVDYLDMPVTARVDDTLRAARCMADAGVAAI
 IVLGGDGTHRAVVRECGAVPIAGLSTGTNNAYPEMREPTIIGLATGLYATGRIPPAQALA
 SNKRLDIVIRDGNGGFRRDIALVDAVISHEHFIGARALWKTDTLAAVYVSFADPEAIGLS
@@ -170,14 +168,18 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
     const EXPECTED_ACCESSION: &'static str = "P27748";
     const EXPECTED_ENTRY_NAME: &'static str = "ACOX_CUPNH";
     const EXPECTED_PROTEIN_NAME: &'static str = "Acetoin catabolism protein X";
-    const EXPECTED_KEYWORD_ATTRIBUTES: [(&'static str, &'static str,); 5] = [
-        ("OS", "Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337)"),
+    const EXPECTED_KEYWORD_ATTRIBUTES: [(&'static str, &'static str); 5] = [
+        (
+            "OS",
+            "Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337)",
+        ),
         ("OX", "381666"),
         ("GN", "acoX"),
         ("PE", "4"),
-        ("SV", "2")
+        ("SV", "2"),
     ];
-    const EXPECTED_SEQUENCE: &'static str = "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER\
+    const EXPECTED_SEQUENCE: &'static str =
+        "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER\
         VLMMPDREGLRVMLARHLARRQGPDSGLPAVDYLDMPVTARVDDTLRAARCMADAGVAAI\
         IVLGGDGTHRAVVRECGAVPIAGLSTGTNNAYPEMREPTIIGLATGLYATGRIPPAQALA\
         SNKRLDIVIRDGNGGFRRDIALVDAVISHEHFIGARALWKTDTLAAVYVSFADPEAIGLS\

@@ -20,22 +20,20 @@ mod test {
         let fasta_file_path = Path::new(FASTA_FILE_PATH_STR);
         let tmp_fasta_file_path = Path::new(TEMP_FASTA_PATH_STR);
 
-        let reader = reader::Reader::new(
-            fasta_file_path,
-            1024
-        ).unwrap();
+        let reader = reader::Reader::new(fasta_file_path, 1024).unwrap();
 
         let entries: Vec<entry::Entry> = reader.into_iter().collect();
         assert_eq!(entries.len(), EXPECTED_NUM_PROTEINS);
 
-        let mut writer = writer::Writer::new(
-            tmp_fasta_file_path
-        ).unwrap();
+        let mut writer = writer::Writer::new(tmp_fasta_file_path).unwrap();
 
         writer.write_all(entries.iter(), true).unwrap();
         writer.flush().unwrap();
 
-        let tmp_fasta_content  = fs::read_to_string(tmp_fasta_file_path).unwrap().trim().to_string();
+        let tmp_fasta_content = fs::read_to_string(tmp_fasta_file_path)
+            .unwrap()
+            .trim()
+            .to_string();
         fs::remove_file(tmp_fasta_file_path).unwrap();
 
         assert_eq!(
