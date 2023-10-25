@@ -70,14 +70,14 @@ impl FallibleIterator for Reader {
                         Some(intens) => intensity_list.push(fast_float::parse(intens)?),
                         None => bail!("intensity value is missing"),
                     };
-                } else if line.starts_with("TITLE=") {
-                    title = line[6..].to_owned();
-                } else if line.starts_with("PEPMASS=") {
-                    precursor_mz = fast_float::parse(&line[8..])?;
-                } else if line.starts_with("RTINSECONDS=") {
-                    retention_time = Some(fast_float::parse(&line[12..])?);
-                } else if line.starts_with("CHARGE=") {
-                    precursor_charge = Some(line[7..].parse()?);
+                } else if let Some(tail) = line.strip_prefix("TITLE=") {
+                    title = tail.to_owned();
+                } else if let Some(tail) = line.strip_prefix("PEPMASS=") {
+                    precursor_mz = fast_float::parse(tail)?;
+                } else if let Some(tail) = line.strip_prefix("RTINSECONDS=") {
+                    retention_time = Some(fast_float::parse(tail)?);
+                } else if let Some(tail) = line.strip_prefix("CHARGE=") {
+                    precursor_charge = Some(tail.parse()?);
                 } else if line == "BEGIN IONS" {
                     in_spectrum = true;
                 } else if line == "END IONS" {

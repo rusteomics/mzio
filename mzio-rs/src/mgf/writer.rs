@@ -38,7 +38,7 @@ impl Writer {
     ///
     pub fn write_spectrum(&mut self, spectrum: &Spectrum) -> Result<usize> {
         let mut written_bytes: usize = 0;
-        written_bytes += self.internal_writer.write("BEGIN IONS\n".as_bytes())?;
+        written_bytes += self.internal_writer.write(b"BEGIN IONS\n")?;
         written_bytes += self
             .internal_writer
             .write(format!("TITLE={}\n", spectrum.get_title()).as_bytes())?;
@@ -48,20 +48,20 @@ impl Writer {
         if let Some(retention_time) = spectrum.get_retention_time() {
             written_bytes += self
                 .internal_writer
-                .write(format!("\nRTINSECONDS={}", retention_time).as_bytes())?;
+                .write(format!("\nRTINSECONDS={retention_time}").as_bytes())?;
         }
         if let Some(charge) = spectrum.get_precursor_charge() {
             written_bytes += self
                 .internal_writer
-                .write(format!("\nCHARGE={}", charge).as_bytes())?;
+                .write(format!("\nCHARGE={charge}").as_bytes())?;
         }
         for (mz, intensity) in zip(spectrum.get_mz_list(), spectrum.get_intensity_list()) {
             written_bytes += self
                 .internal_writer
                 .write(format!("\n{mz} {intensity}").as_bytes())?;
         }
-        written_bytes += self.internal_writer.write("\nEND IONS\n".as_bytes())?;
-        return Ok(written_bytes);
+        written_bytes += self.internal_writer.write(b"\nEND IONS\n")?;
+        Ok(written_bytes)
     }
 
     /// Writes multiple spectra to file.
@@ -78,7 +78,7 @@ impl Writer {
         for spectrum in spectra {
             written_bytes += self.write_spectrum(spectrum)?;
         }
-        return Ok(written_bytes);
+        Ok(written_bytes)
     }
 
     /// Flushes the buffer

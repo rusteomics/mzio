@@ -39,28 +39,28 @@ impl Writer {
     fn create_header(entry: &Entry, sort_keyword_attributes: bool) -> String {
         let mut header = ">".to_string();
         header.push_str(entry.get_database());
-        header.push_str("|");
+        header.push('|');
         header.push_str(entry.get_accession());
-        header.push_str("|");
+        header.push('|');
         header.push_str(entry.get_entry_name());
-        header.push_str(" ");
+        header.push(' ');
         header.push_str(entry.get_protein_name());
-        if entry.get_keyword_attributes().len() > 0 {
-            header.push_str(" ");
+        if !entry.get_keyword_attributes().is_empty() {
+            header.push(' ');
             let mut keyword_arguments: Vec<String> = entry
                 .get_keyword_attributes()
-                .into_iter()
-                .map(|(key, value)| format!("{}={}", key, value))
+                .iter()
+                .map(|(key, value)| format!("{key}={value}"))
                 .collect();
             if sort_keyword_attributes {
                 keyword_arguments.sort();
             }
             header.push_str(&keyword_arguments.join(" "));
         }
-        return header;
+        header
     }
 
-    /// Splits sequence into chunk of MAX_AMINO_ACIDS_PER_LINE.
+    /// Splits sequence into chunk of `MAX_AMINO_ACIDS_PER_LINE`.
     ///
     /// # Arguments
     ///
@@ -93,7 +93,7 @@ impl Writer {
             .internal_writer
             .write(Self::format_sequence(entry.get_sequence()).as_bytes())?;
         written_bytes += self.internal_writer.write(b"\n")?;
-        return Ok(written_bytes);
+        Ok(written_bytes)
     }
 
     /// Writes multiple FASTA entry to file.
@@ -111,7 +111,7 @@ impl Writer {
         for entry in entries {
             written_bytes += self.write_entry(entry, sort_keyword_attributes)?;
         }
-        return Ok(written_bytes);
+        Ok(written_bytes)
     }
 
     /// Flushes the buffer
@@ -128,18 +128,17 @@ mod test {
 
     use super::*;
 
-    const TEST_SEQUENCE: &'static str =
-        "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER\
+    const TEST_SEQUENCE: &str = "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER\
         VLMMPDREGLRVMLARHLARRQGPDSGLPAVDYLDMPVTARVDDTLRAARCMADAGVAAI\
         IVLGGDGTHRAVVRECGAVPIAGLSTGTNNAYPEMREPTIIGLATGLYATGRIPPAQALA\
         SNKRLDIVIRDGNGGFRRDIALVDAVISHEHFIGARALWKTDTLAAVYVSFADPEAIGLS\
         SIAGLLEPVGRREEGGLAIELAAPGEGEFDLCAPIAPGLMCTVPVAGWQRLEHGRPHRVR\
         QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
-    const TEST_DATABASE: &'static str = "sp";
-    const TEST_ACCESSION: &'static str = "P27748";
-    const TEST_ENTRY_NAME: &'static str = "ACOX_CUPNH";
-    const TEST_PROTEIN_NAME: &'static str = "Acetoin catabolism protein X";
-    const TEST_KEYWORD_ATTRIBUTES: [(&'static str, &'static str); 5] = [
+    const TEST_DATABASE: &str = "sp";
+    const TEST_ACCESSION: &str = "P27748";
+    const TEST_ENTRY_NAME: &str = "ACOX_CUPNH";
+    const TEST_PROTEIN_NAME: &str = "Acetoin catabolism protein X";
+    const TEST_KEYWORD_ATTRIBUTES: [(&str, &str); 5] = [
         (
             "OS",
             "Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337)",
@@ -149,9 +148,8 @@ mod test {
         ("PE", "4"),
         ("SV", "2"),
     ];
-    const EXPECTED_HEADER: &'static str = ">sp|P27748|ACOX_CUPNH Acetoin catabolism protein X GN=acoX OS=Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337) OX=381666 PE=4 SV=2";
-    const EXPECTED_SEQUENCE: &'static str =
-        "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER
+    const EXPECTED_HEADER: &str = ">sp|P27748|ACOX_CUPNH Acetoin catabolism protein X GN=acoX OS=Cupriavidus necator (strain ATCC 17699 / H16 / DSM 428 / Stanier 337) OX=381666 PE=4 SV=2";
+    const EXPECTED_SEQUENCE: &str = "MGHAAGASAQIAPVVGIIANPISARDIRRVIANANSLQLADRVNIVLRLLAALASCGVER
 VLMMPDREGLRVMLARHLARRQGPDSGLPAVDYLDMPVTARVDDTLRAARCMADAGVAAI
 IVLGGDGTHRAVVRECGAVPIAGLSTGTNNAYPEMREPTIIGLATGLYATGRIPPAQALA
 SNKRLDIVIRDGNGGFRRDIALVDAVISHEHFIGARALWKTDTLAAVYVSFADPEAIGLS
@@ -163,7 +161,7 @@ QRSGIVALDGERELAFGPDDEVTVTLHDHAFRSIDVAACMRHAGRHHLMRSLPQPAAVG";
     ///
     fn test_seqeunce_formatting() {
         let formatted_sequence = Writer::format_sequence(TEST_SEQUENCE);
-        assert_eq!(formatted_sequence, EXPECTED_SEQUENCE)
+        assert_eq!(formatted_sequence, EXPECTED_SEQUENCE);
     }
 
     #[test]

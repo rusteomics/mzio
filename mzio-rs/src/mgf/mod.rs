@@ -14,9 +14,9 @@ mod test {
     use fallible_iterator::FallibleIterator;
     use fallible_iterator::IntoFallibleIterator;
 
-    const MGF_FILE_PATH_STR: &'static str = "../test_files/mgf/Velos005137.mgf";
+    const MGF_FILE_PATH_STR: &str = "../test_files/mgf/Velos005137.mgf";
     const EXPECTED_NUM_SPECTRA: usize = 100;
-    const TEMP_MGF_PATH_STR: &'static str = "../test_files/mgf/Velos005137.mgf.tmp";
+    const TEMP_MGF_PATH_STR: &str = "../test_files/mgf/Velos005137.mgf.tmp";
 
     #[test]
     /// Reads a MGF file, parses the spectra,
@@ -46,7 +46,7 @@ mod test {
         // Compare files line by line without new line characters,
         // to make sure different line endings doesn't falsify the test.
         for (test_line, tmp_line) in zip(test_mgf_content.lines(), tmp_mgf_content.lines()) {
-            assert_eq!(test_line, tmp_line)
+            assert_eq!(test_line, tmp_line);
         }
     }
 }

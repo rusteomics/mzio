@@ -42,7 +42,7 @@ impl Entry {
     /// Returns the database type
     ///
     pub fn get_database(&self) -> &str {
-        &self.database.as_str()
+        self.database.as_str()
     }
 
     /// Returns the accession

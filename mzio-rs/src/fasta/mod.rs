@@ -9,9 +9,9 @@ mod test {
     use std::fs;
     use std::path::Path;
 
-    const FASTA_FILE_PATH_STR: &'static str = "./test_files/fasta/partial_mouse.fasta";
+    const FASTA_FILE_PATH_STR: &str = "./test_files/fasta/partial_mouse.fasta";
     const EXPECTED_NUM_PROTEINS: usize = 10;
-    const TEMP_FASTA_PATH_STR: &'static str = "./test_files/fasta/partial_mouse.fasta.tmp";
+    const TEMP_FASTA_PATH_STR: &str = "./test_files/fasta/partial_mouse.fasta.tmp";
 
     #[test]
     /// Reads a FASTA file, parses the proteins,
