@@ -13,4 +13,4 @@ crate-type = ["cdylib"]
 anyhow = "1.0.75"
 fallible-iterator = "0.2.0"
 pyo3 = { version = "0.20.0", features = ["extension-module", "anyhow"] }
-mzio = { path = "../mzio-rs", features = ["fasta", "mgf"] }
+mzio = { path = "../mzio-rs", features = ["fasta", "mgf", "msp"] }

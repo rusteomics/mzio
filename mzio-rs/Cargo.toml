@@ -24,3 +24,4 @@ mzcore = { path = "../../mzcore/mzcore-rs" }
 [features]
 fasta = []
 mgf = ["dep:fast-float"]
+msp = ["dep:fast-float"]
